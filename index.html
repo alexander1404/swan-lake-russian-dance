@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Русский танец в балете «Лебединое озеро»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070c1c; --ink:#ece7d8; --muted:#aeb8d0;
+  --gold:#d9b45b; --gold2:#f0d48a; --gold3:#b98f36;
+  --card:rgba(255,255,255,.045); --line:rgba(217,180,91,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'PT Sans',Verdana,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{position:fixed;inset:0}
+
+/* ── фон ── */
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+ background:
+  radial-gradient(1100px 700px at 85% -10%, rgba(70,105,190,.22), transparent 60%),
+  radial-gradient(900px 650px at -10% 110%, rgba(40,62,120,.32), transparent 60%),
+  radial-gradient(750px 520px at 50% 118%, rgba(150,110,40,.10), transparent 60%),
+  linear-gradient(160deg,#0a1229 0%,#070c1c 55%,#0a142e 100%)}
+.vignette{position:absolute;inset:0;background:radial-gradient(125% 95% at 50% 42%, transparent 55%, rgba(0,0,0,.55) 100%)}
+.spark{position:absolute;border-radius:50%;background:radial-gradient(circle, rgba(240,212,138,.95), rgba(240,212,138,0) 70%);animation:float 9s ease-in-out infinite}
+.s1{width:10px;height:10px;top:18%;left:11%}
+.s2{width:6px;height:6px;top:28%;right:13%;animation-delay:1.3s}
+.s3{width:8px;height:8px;bottom:26%;left:19%;animation-delay:2.5s}
+.s4{width:5px;height:5px;top:12%;right:31%;animation-delay:3.3s}
+.s5{width:7px;height:7px;bottom:15%;right:21%;animation-delay:4.1s}
+.s6{width:4px;height:4px;top:56%;left:6%;animation-delay:5s}
+@keyframes float{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-20px);opacity:.85}}
+
+/* ── слайды ── */
+.slide{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;
+ justify-content:center;justify-content:safe center;
+ padding:6.5vh 7vw 11vh;opacity:0;visibility:hidden;transform:translateY(28px);
+ transition:opacity .55s ease,transform .55s ease,visibility 0s linear .55s;
+ overflow-y:auto;scrollbar-width:thin}
+.slide.active{opacity:1;visibility:visible;transform:none;z-index:2;
+ transition:opacity .55s ease .08s,transform .55s ease .08s,visibility 0s}
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-thumb{background:rgba(217,180,91,.3);border-radius:4px}
+
+.kicker{font-size:clamp(11px,1.05vw,14px);font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.4vh}
+h2{font-family:'Playfair Display',Georgia,serif;font-weight:700;line-height:1.12;font-size:clamp(26px,3.5vw,46px);margin-bottom:3vh;color:#e2c06d;
+ background:linear-gradient(100deg,#f7e5b5 0%,#e2c06d 48%,#b98f36 100%);
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+p{font-size:clamp(15px,1.4vw,19.5px);line-height:1.66;color:var(--ink)}
+b,strong{color:var(--gold2);font-weight:700}
+.lead{font-size:clamp(16px,1.55vw,21px)}
+
+.card{background:var(--card);border:1px solid rgba(255,255,255,.09);border-left:3px solid var(--gold);
+ border-radius:12px;padding:clamp(15px,1.9vw,26px) clamp(18px,2.2vw,30px)}
+.stack>*+*{margin-top:1.8vh}
+.note{background:linear-gradient(120deg,rgba(217,180,91,.13),rgba(217,180,91,.04));
+ border:1px solid var(--line);border-radius:14px;padding:clamp(15px,1.9vw,26px) clamp(18px,2.2vw,30px)}
+.note .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+ color:#17120a;background:linear-gradient(100deg,var(--gold2),var(--gold3));border-radius:999px;padding:4px 13px;margin-bottom:12px}
+.quote{border-left:3px solid var(--gold);padding:8px 4px 8px 22px;margin-top:2.8vh}
+.quote p{font-style:italic;color:#efe8d4}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,18px)}
+@media(max-width:840px){.grid2{grid-template-columns:1fr}}
+.task{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid rgba(255,255,255,.09);
+ border-radius:12px;padding:clamp(13px,1.6vw,20px) clamp(15px,1.8vw,22px)}
+.task .num{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(20px,2.2vw,30px);line-height:1.15;color:var(--gold);min-width:1.8em}
+.task p{font-size:clamp(14px,1.3vw,18px)}
+.fact{background:var(--card);border:1px solid rgba(255,255,255,.09);border-top:3px solid var(--gold);
+ border-radius:12px;padding:clamp(13px,1.6vw,20px) clamp(15px,1.8vw,22px)}
+.fact .num{font-family:'Playfair Display',serif;font-size:clamp(15px,1.5vw,20px);color:var(--gold);letter-spacing:.14em;margin-bottom:8px}
+
+.timeline{display:flex;gap:14px;margin-top:3vh;flex-wrap:wrap}
+.t-item{flex:1 1 200px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.t-item .t-date{font-family:'Playfair Display',serif;color:var(--gold2);font-size:clamp(16px,1.6vw,22px);font-weight:700;margin-bottom:4px}
+.t-item .t-label{font-size:clamp(12.5px,1.15vw,15px);color:var(--muted);line-height:1.45}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:2.6vh}
+.chip{border:1px solid rgba(217,180,91,.45);border-radius:999px;padding:8px 18px;font-size:clamp(13px,1.2vw,16px);color:#f1e6c8;background:rgba(217,180,91,.08)}
+.chip.gold{background:linear-gradient(100deg,rgba(217,180,91,.3),rgba(217,180,91,.12));border-color:var(--gold);color:#ffe9b0;font-weight:700}
+
+.toc{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.2vh,14px) clamp(20px,3vw,48px);max-width:1060px}
+@media(max-width:840px){.toc{grid-template-columns:1fr}}
+.toc-item{display:flex;align-items:baseline;gap:14px;padding:10px 6px;border-bottom:1px solid rgba(255,255,255,.1);cursor:pointer;transition:.25s}
+.toc-item:hover{border-color:var(--gold);background:rgba(217,180,91,.05);padding-left:12px}
+.toc-item .n{font-family:'Playfair Display',serif;color:var(--gold);font-size:clamp(15px,1.5vw,20px);min-width:2ch}
+.toc-item .t{font-size:clamp(14.5px,1.35vw,19px)}
+
+/* ── титульный ── */
+.s-title{align-items:center;text-align:center}
+.swan{font-size:clamp(46px,6vw,88px);line-height:1;margin-bottom:1.8vh;filter:drop-shadow(0 8px 30px rgba(217,180,91,.35))}
+.s-title h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;line-height:1.1;font-size:clamp(32px,5.4vw,74px);color:#e2c06d;
+ background:linear-gradient(100deg,#f7e5b5,#e2c06d 45%,#c39a3f 75%,#f0d48a);
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.s-title .tagline{margin-top:1.8vh;color:var(--muted);font-size:clamp(14px,1.4vw,19px);letter-spacing:.06em}
+.ornament{display:flex;align-items:center;justify-content:center;gap:16px;margin:2.8vh 0 0;
+ font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(14px,1.4vw,19px);letter-spacing:.12em;color:var(--gold2)}
+.ornament::before,.ornament::after{content:"";height:1px;width:min(170px,20vw)}
+.ornament::before{background:linear-gradient(90deg,transparent,var(--gold))}
+.ornament::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.hint{margin-top:4.5vh;color:rgba(233,227,210,.42);font-size:clamp(11px,1vw,13.5px);letter-spacing:.1em}
+kbd{border:1px solid rgba(255,255,255,.25);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-family:inherit;font-size:.92em;color:#cfd6e6}
+
+/* ── интерфейс ── */
+.ui{position:fixed;inset:0;z-index:60;pointer-events:none}
+.progress{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.07)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold3),var(--gold2));transition:width .45s ease}
+.brand{position:absolute;left:26px;bottom:22px;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(233,227,210,.38)}
+.hud{position:absolute;right:22px;bottom:16px;display:flex;align-items:center;gap:9px;pointer-events:auto}
+.counter{font-size:12.5px;letter-spacing:.18em;color:var(--muted);margin-right:4px}
+.btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(9,14,30,.65);color:var(--gold2);
+ font-size:17px;line-height:1;cursor:pointer;transition:.22s;backdrop-filter:blur(5px)}
+.btn:hover{background:rgba(217,180,91,.18);transform:translateY(-2px)}
+
+/* ── анимации ── */
+.anim{opacity:0;transform:translateY(16px)}
+.slide.active .anim{animation:rise .7s cubic-bezier(.22,.7,.25,1) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none}}
+/* ── галерея ── */
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin-top:2vh;
+}
+
+.gallery-item{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  transition:.3s ease;
+}
+
+.gallery-item:hover{
+  transform:translateY(-4px);
+  border-color:var(--gold);
+}
+
+.gallery-item img{
+  width:100%;
+  height:240px;
+  object-fit:cover;
+  display:block;
+}
+
+@media(max-width:900px){
+  .gallery-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:640px){
+  .gallery-grid{
+    grid-template-columns:1fr;
+  }
+
+  .gallery-item img{
+    height:220px;
+  }
+}
+/* ── печать ── */
+@page{size:landscape;margin:0}
+@media print{
+ html,body{overflow:visible;height:auto}
+ .deck{position:static}
+ .ui{display:none}
+ .slide{position:relative;inset:auto;opacity:1;visibility:visible;transform:none;min-height:100vh;page-break-after:always;break-after:page;overflow:visible}
+ .anim{opacity:1!important;transform:none!important;animation:none!important}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="deck">
+<div class="bg" aria-hidden="true">
+  <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span>
+  <span class="spark s4"></span><span class="spark s5"></span><span class="spark s6"></span>
+  <div class="vignette"></div>
+</div>
+
+<!-- 1. Титульный -->
+<section class="slide s-title active">
+  <div class="swan anim" style="--d:.05s">🦢</div>
+  <div class="kicker anim" style="--d:.15s">П. И. Чайковский · балет «Лебединое озеро»</div>
+  <h1 class="anim" style="--d:.25s">Русский танец</h1>
+  <div class="tagline anim" style="--d:.35s">в балете «Лебединое озеро»</div>
+  <div class="ornament anim" style="--d:.45s">Danse russe</div>
+  <div class="hint anim" style="--d:.6s"><kbd>←</kbd> <kbd>→</kbd> или <kbd>пробел</kbd> — листать слайды · <kbd>F</kbd> — во весь экран</div>
+</section>
+
+<!-- 2. Содержание -->
+<section class="slide">
+  <div class="kicker">План презентации</div>
+  <h2 class="anim">Содержание</h2>
+  <div class="toc">
+    <div class="toc-item anim" style="--d:.05s" data-go="2"><span class="n">01</span><span class="t">Введение</span></div>
+    <div class="toc-item anim" style="--d:.1s"  data-go="3"><span class="n">02</span><span class="t">История создания</span></div>
+    <div class="toc-item anim" style="--d:.15s" data-go="5"><span class="n">03</span><span class="t">Первая исполнительница</span></div>
+    <div class="toc-item anim" style="--d:.2s"  data-go="6"><span class="n">04</span><span class="t">Русский танец в структуре балета</span></div>
+    <div class="toc-item anim" style="--d:.25s" data-go="8"><span class="n">05</span><span class="t">Музыкальные особенности</span></div>
+    <div class="toc-item anim" style="--d:.3s"  data-go="9"><span class="n">06</span><span class="t">Интересные факты</span></div>
+    <div class="toc-item anim" style="--d:.35s" data-go="11"><span class="n">07</span><span class="t">Заключение</span></div>
+    <div class="toc-item anim" style="--d:.4s"  data-go="12"><span class="n">08</span><span class="t">Редакция Касьяна Голейзовского</span></div>
+    <div class="toc-item anim" style="--d:.45s" data-go="15"><span class="n">09</span><span class="t">Значение постановки Голейзовского</span></div>
+  </div>
+</section>
+
+<!-- 3. Введение -->
+<section class="slide">
+  <div class="kicker">Раздел 01</div>
+  <h2 class="anim">Введение</h2>
+  <div class="card anim" style="--d:.12s">
+    <p class="lead">Под <b>«Русским танцем»</b> в балете П. И. Чайковского «Лебединое озеро» обычно понимают музыкальный номер <b>Danse russe</b> (Русский танец), входящий в третий акт балета. Это самостоятельный танцевальный эпизод, который не следует путать с самим балетом. Исторически он относится к числу так называемых <b>характерных танцев</b>, то есть сценических номеров, стилизованных под национальную танцевальную традицию.</p>
+  </div>
+</section>
+
+<!-- 4. История создания, ч. 1 -->
+<section class="slide">
+  <div class="kicker">Раздел 02 · Часть 1</div>
+  <h2 class="anim">История создания</h2>
+  <div class="card anim" style="--d:.1s">
+    <p>Музыка к балету «Лебединое озеро» была написана <b>Петром Ильичом Чайковским</b> в <b>1875–1876 годах</b>. Премьера состоялась <b>4 марта 1877 года</b> (20 февраля по старому стилю) в <b>Большом театре Москвы</b>. Хореографом первой постановки был <b>Юлиус Рейзингер</b>. Несмотря на высокий художественный уровень музыки, спектакль не имел большого успеха у публики и критики.</p>
+  </div>
+  <div class="timeline">
+    <div class="t-item anim" style="--d:.2s"><div class="t-date">1875–1876</div><div class="t-label">Чайковский пишет музыку балета</div></div>
+    <div class="t-item anim" style="--d:.3s"><div class="t-date">4 марта 1877</div><div class="t-label">премьера в Большом театре Москвы</div></div>
+    <div class="t-item anim" style="--d:.4s"><div class="t-date">Юлиус Рейзингер</div><div class="t-label">хореограф первой постановки</div></div>
+  </div>
+</section>
+
+<!-- 5. История создания, ч. 2 -->
+<section class="slide">
+  <div class="kicker">Раздел 02 · Часть 2</div>
+  <h2 class="anim">Партитура 1877 года и редакция 1895 года</h2>
+  <div class="stack">
+    <div class="card anim" style="--d:.1s">
+      <p><b>В первоначальной партитуре 1877 года</b> присутствовал специальный номер <b>«Danse russe pour Mlle. Pelageya Karpakova»</b> («Русский танец для мадемуазель Пелагеи Карпаковой»). Его название сохранилось в источниках и современных изданиях партитуры.</p>
+    </div>
+    <div class="card anim" style="--d:.2s">
+      <p>В большинстве современных постановок используется <b>редакция 1895 года</b>, созданная хореографами <b>Мариусом Петипа</b> и <b>Львом Ивановым</b> для Мариинского театра в Санкт-Петербурге. Музыкальную редакцию подготовил <b>Риккардо Дриго</b>, который изменил порядок некоторых номеров, сократил часть музыки и внёс ряд корректировок. Поэтому расположение и использование Русского танца в разных спектаклях может отличаться.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Первая исполнительница -->
+<section class="slide">
+  <div class="kicker">Раздел 03</div>
+  <h2 class="anim">Первая исполнительница</h2>
+  <div class="note anim" style="--d:.1s;margin-bottom:2vh">
+    <div class="tag">Пелагея (Полина) Карпакова</div>
+    <p>Первой исполнительницей партии Одетты в премьере 1877 года была <b>Пелагея (Полина) Карпакова</b>. Именно её имя связано с Русским танцем, поскольку в авторской партитуре номер обозначен как <b>«Danse russe pour Mlle. Pelageya Karpakova»</b>. Это позволяет считать Карпакову первой исполнительницей данного номера.</p>
+  </div>
+  <div class="card anim" style="--d:.2s">
+    <p>Следует отметить, что точное описание первоначальной хореографии Русского танца не сохранилось, поэтому современные версии могут существенно отличаться от того, что зрители видели в 1877 году.</p>
+  </div>
+</section>
+
+<!-- 7. Структура балета, ч. 1 -->
+<section class="slide">
+  <div class="kicker">Раздел 04 · Часть 1</div>
+  <h2 class="anim">Русский танец в структуре балета</h2>
+  <div class="card anim" style="--d:.1s">
+    <p>Действие <b>третьего акта</b> происходит во дворце принца Зигфрида во время бала. Здесь представлены различные национальные танцы, создающие атмосферу праздничного придворного торжества. В разных редакциях балета встречаются испанский танец, венгерский чардаш, неаполитанский танец, мазурка и Русский танец.</p>
+  </div>
+  <div class="chips">
+    <span class="chip anim" style="--d:.2s">Испанский танец</span>
+    <span class="chip anim" style="--d:.26s">Венгерский чардаш</span>
+    <span class="chip anim" style="--d:.32s">Неаполитанский танец</span>
+    <span class="chip anim" style="--d:.38s">Мазурка</span>
+    <span class="chip gold anim" style="--d:.44s">Русский танец</span>
+  </div>
+</section>
+
+<!-- 8. Структура балета, ч. 2 -->
+<section class="slide">
+  <div class="kicker">Раздел 04 · Часть 2</div>
+  <h2 class="anim">Художественные задачи</h2>
+  <p class="anim" style="--d:.08s;margin-bottom:1.8vh">Русский танец выполняет несколько художественных задач:</p>
+  <div class="grid2">
+    <div class="task anim" style="--d:.14s"><span class="num">I</span><p>создаёт национальный колорит;</p></div>
+    <div class="task anim" style="--d:.2s"><span class="num">II</span><p>контрастирует с поэтичными и мистическими сценами у озера;</p></div>
+    <div class="task anim" style="--d:.26s"><span class="num">III</span><p>демонстрирует энергию и праздничность действия;</p></div>
+    <div class="task anim" style="--d:.32s"><span class="num">IV</span><p>даёт возможность солистам и артистам кордебалета показать техническое мастерство.</p></div>
+  </div>
+  <div class="quote anim" style="--d:.42s">
+    <p>Музыка номера написана в духе русской народной плясовой традиции, однако не является прямой обработкой какого-либо конкретного народного танца. Это авторское произведение Чайковского, в котором элементы народной музыкальной стилистики соединены с симфоническим мышлением композитора.</p>
+  </div>
+</section>
+
+<!-- 9. Музыкальные особенности -->
+<section class="slide">
+  <div class="kicker">Раздел 05</div>
+  <h2 class="anim">Музыкальные особенности</h2>
+  <div class="stack">
+    <div class="card anim" style="--d:.1s">
+      <p>Русский танец отличается <b>ярким ритмом</b>, <b>стремительным развитием</b> и <b>богатой оркестровкой</b>. Исследователи отмечают, что музыка создаёт впечатление звучания народных инструментов и праздничного народного гуляния. Вместе с тем композитор использует сложные симфонические приёмы, характерные для своего зрелого стиля.</p>
+    </div>
+    <div class="note anim" style="--d:.2s">
+      <div class="tag">Сложность исполнения</div>
+      <p>Из-за насыщенной оркестровой фактуры пьеса считается достаточно сложной как для оркестрантов, так и для исполнителей фортепианных переложений.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. Интересные факты, ч. 1 -->
+<section class="slide">
+  <div class="kicker">Раздел 06 · Часть 1</div>
+  <h2 class="anim">Интересные факты</h2>
+  <div class="grid2">
+    <div class="fact anim" style="--d:.1s"><div class="num">01</div><p>Первоначальный сценарий «Лебединого озера» был создан как двухактный балет, однако в дальнейшем произведение неоднократно перерабатывалось и приобрело привычную современную структуру.</p></div>
+    <div class="fact anim" style="--d:.16s"><div class="num">02</div><p>Русский танец присутствовал уже в партитуре первой постановки 1877 года и был связан с именем Пелагеи Карпаковой.</p></div>
+    <div class="fact anim" style="--d:.22s"><div class="num">03</div><p>Наибольшую известность «Лебединое озеро» получило не после премьеры, а после знаменитого возобновления 1895 года в постановке Петипа и Иванова.</p></div>
+    <div class="fact anim" style="--d:.28s"><div class="num">04</div><p>В различных редакциях балета Русский танец может исполняться как сольный номер, дуэт или ансамблевый дивертисмент.</p></div>
+  </div>
+</section>
+
+<!-- 11. Интересные факты, ч. 2 -->
+<section class="slide">
+  <div class="kicker">Раздел 06 · Часть 2</div>
+  <h2 class="anim">Историческая справка</h2>
+  <div class="note anim" style="--d:.12s">
+    <div class="tag">Важно · проверка фактов</div>
+    <p class="lead">Утверждение о том, что партию Русского танца в постановке 1895 года впервые исполняла <b>Агриппина Ваганова</b>, документально не подтверждается. На момент премьеры 1895 года Ваганова ещё не являлась ведущей исполнительницей этой партии, поэтому подобное утверждение считается <b>исторически недостоверным</b>. Данный факт был исключён из итогового текста.</p>
+  </div>
+</section>
+
+<!-- 12. Заключение -->
+<section class="slide">
+  <div class="kicker">Раздел 07</div>
+  <h2 class="anim">Заключение</h2>
+  <div class="quote anim" style="--d:.12s;max-width:1080px">
+    <p class="lead">Русский танец из балета «Лебединое озеро» представляет собой яркий образец характерного танца в классическом балете. Созданный Чайковским для первой исполнительницы Одетты Пелагеи Карпаковой, этот номер со временем стал частью мировой балетной традиции. Сегодня он воспринимается не только как эффектный концертный эпизод, но и как важная часть истории одного из самых известных балетов в мире.</p>
+  </div>
+</section>
+
+<!-- 13. Редакция Голейзовского, ч. 1 -->
+<section class="slide">
+  <div class="kicker">Раздел 08 · Часть 1</div>
+  <h2 class="anim">Редакция Касьяна Голейзовского</h2>
+  <div class="stack">
+    <div class="card anim" style="--d:.1s">
+      <p>Особое место в истории сценического воплощения «Русского танца» из балета «Лебединое озеро» занимает редакция советского хореографа <b>Касьяна Ярославовича Голейзовского</b>. В <b>1966 году</b> балетмейстер создал самостоятельную концертную постановку на музыку «Русского танца» П. И. Чайковского, которая впоследствии получила широкое распространение в концертном и учебном репертуаре.</p>
+    </div>
+    <div class="card anim" style="--d:.2s">
+      <p>В отличие от традиционных академических трактовок, хореограф стремился не к буквальному воспроизведению русской народной пляски, а к созданию художественного сценического образа, основанного на <b>синтезе классического балета и народно-сценической пластики</b>. Исследователи отмечают, что в хореографии Голейзовского нашли отражение его глубокий интерес к культуре Востока и Средней Азии, что проявилось в своеобразии поз, движений рук и общей пластической выразительности танца.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 14. Редакция Голейзовского, ч. 2 -->
+<section class="slide">
+  <div class="kicker">Раздел 08 · Часть 2</div>
+  <h2 class="anim">Редакция Касьяна Голейзовского</h2>
+  <div class="stack">
+    <div class="card anim" style="--d:.1s">
+      <p>Постановка отличается <b>виртуозной техникой исполнения</b>, <b>сложной координацией движений</b> и <b>яркой эмоциональной выразительностью</b>. Хореограф сумел подчеркнуть характер музыки Петра Ильича Чайковского, соединив энергичность народного танца с высокой балетной культурой исполнения. В результате был создан сценический номер, который приобрёл самостоятельную художественную ценность и стал исполняться отдельно от полного спектакля «Лебединое озеро».</p>
+    </div>
+    <div class="card anim" style="--d:.2s">
+      <p>На протяжении многих лет «Русский танец» в редакции Голейзовского входил в репертуар советских и российских артистов балета. Сохранились сведения о его популярности в концертных программах, а также о том, что номер неоднократно исполнялся известными балеринами второй половины XX века.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15. Редакция Голейзовского, ч. 3 -->
+<section class="slide">
+  <div class="kicker">Раздел 08 · Часть 3</div>
+  <h2 class="anim">Редакция Касьяна Голейзовского сегодня</h2>
+  <div class="card anim" style="--d:.1s">
+    <p>В настоящее время данная редакция рассматривается как значимый образец хореографического наследия Касьяна Ярославовича Голейзовского и широко используется в <b>образовательной практике</b> хореографических училищ, колледжей искусств и детских школ искусств. Исследователи отмечают, что «Русский танец» является одной из <b>наиболее востребованных миниатюр</b> из творческого наследия балетмейстера.</p>
+  </div>
+</section>
+
+<!-- 16. Значение постановки Голейзовского -->
+<section class="slide">
+  <div class="kicker">Раздел 09</div>
+  <h2 class="anim">Значение постановки Голейзовского</h2>
+  <p class="anim" style="--d:.08s;margin-bottom:1.8vh">Значение редакции Касьяна Ярославовича Голейзовского заключается в следующем:</p>
+  <div class="grid2">
+    <div class="task anim" style="--d:.14s"><span class="num">I</span><p>сохранение интереса к редко исполняемому номеру из первоначальной партитуры балета «Лебединое озеро»;</p></div>
+    <div class="task anim" style="--d:.2s"><span class="num">II</span><p>превращение «Русского танца» в самостоятельную концертную миниатюру;</p></div>
+    <div class="task anim" style="--d:.26s"><span class="num">III</span><p>развитие традиций характерного танца в отечественном балетном искусстве;</p></div>
+    <div class="task anim" style="--d:.32s"><span class="num">IV</span><p>включение произведения в систему профессионального хореографического образования.</p></div>
+  </div>
+  <div class="note anim" style="--d:.44s;margin-top:2.4vh">
+    <p>Таким образом, редакция «Русского танца», созданная Касьяном Ярославовичем Голейзовским, сыграла важную роль в сохранении и популяризации этого номера. Благодаря данной постановке произведение Петра Ильича Чайковского получило самостоятельную сценическую жизнь и вошло в <b>золотой фонд отечественного хореографического искусства</b>.</p>
+  </div>
+</section>
+
+
+</section>
+<!-- 17. Галерея -->
+<section class="slide">
+  <div class="kicker">Галерея</div>
+  <h2 class="anim">Фотогалерея</h2>
+
+  <div class="gallery-grid">
+
+    <div class="gallery-item anim" style="--d:.05s">
+      <img src="img.1.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.10s">
+      <img src="img.2.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.15s">
+      <img src="img.3.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.20s">
+      <img src="img.4.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.25s">
+      <img src="img.5.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.30s">
+      <img src="img.6.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.35s">
+      <img src="img.7.jpg" alt="">
+    </div>
+
+    <div class="gallery-item anim" style="--d:.40s">
+      <img src="img.8.jpg" alt="">
+    </div>
+    <div class="gallery-item anim" style="--d:.40s">
+      <img src="img.9.jpg" alt="">
+    </div>
+
+  </div>
+</section>
+<!-- Управление -->
+<div class="ui">
+  <div class="progress"><i id="bar"></i></div>
+  <div class="brand">«Лебединое озеро» · Русский танец</div>
+  <div class="hud">
+    <span class="counter" id="counter">01 / 18</span>
+  
+    <button class="btn" id="prev" title="Назад">←</button>
+    <button class="btn" id="next" title="Вперёд">→</button>
+    <button class="btn" id="fs" title="Во весь экран (F)">⛶</button>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides=Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var bar=document.getElementById('bar');
+  var counter=document.getElementById('counter');
+  function pad(n){return String(n).padStart(2,'0');}
+  var cur=0;
+
+  function go(n,skipHash){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    slides[cur].classList.remove('active');
+    cur=n;
+    var s=slides[cur];
+    s.classList.add('active');
+    s.scrollTop=0;
+    bar.style.width=((cur+1)/slides.length*100)+'%';
+    counter.textContent=pad(cur+1)+' / '+pad(slides.length);
+    if(!skipHash){history.replaceState(null,'','#'+(cur+1));}
+  }
+
+  // старт с нужного слайда по #N
+  var h=parseInt(location.hash.replace('#',''),10);
+  if(!isNaN(h)&&h>=1&&h<=slides.length){
+    slides[0].classList.remove('active');
+    cur=h-1;
+    slides[cur].classList.add('active');
+  }
+  bar.style.width=((cur+1)/slides.length*100)+'%';
+  counter.textContent=pad(cur+1)+' / '+pad(slides.length);
+
+  function toggleFS(){
+    if(document.fullscreenElement){if(document.exitFullscreen)document.exitFullscreen();}
+    else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen();}
+  }
+
+  document.getElementById('next').onclick=function(){go(cur+1);};
+  document.getElementById('prev').onclick=function(){go(cur-1);};
+  document.getElementById('fs').onclick=toggleFS;
+
+  window.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='ArrowRight'||k==='ArrowDown'||k==='PageDown'||k===' '){e.preventDefault();go(cur+1);}
+    else if(k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'){e.preventDefault();go(cur-1);}
+    else if(k==='Home'){e.preventDefault();go(0);}
+    else if(k==='End'){e.preventDefault();go(slides.length-1);}
+    else if(k==='f'||k==='F'||k==='а'||k==='А'){toggleFS();}
+  });
+
+  var tx=0,ty=0;
+  window.addEventListener('touchstart',function(e){
+    tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY;
+  },{passive:true});
+  window.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){dx<0?go(cur+1):go(cur-1);}
+  },{passive:true});
+
+  var wl=0;
+  window.addEventListener('wheel',function(e){
+    var now=Date.now();
+    if(now-wl<750||Math.abs(e.deltaY)<25)return;
+    wl=now;
+    e.deltaY>0?go(cur+1):go(cur-1);
+  },{passive:true});
+
+  document.querySelectorAll('[data-go]').forEach(function(el){
+    el.addEventListener('click',function(){go(parseInt(el.getAttribute('data-go'),10));});
+  });
+})();
+</script>
+</body>
+</html>
