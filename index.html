@@ -169,6 +169,35 @@ kbd{border:1px solid rgba(255,255,255,.25);border-bottom-width:2px;border-radius
     height:220px;
   }
 }
+
+/* ── музыкальный плеер ── */
+.player{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);margin-top:2.2vh;
+ background:var(--card);border:1px solid var(--line);border-radius:14px;
+ padding:clamp(13px,1.6vw,20px) clamp(15px,1.9vw,24px)}
+.player-btn{width:48px;height:48px;border-radius:50%;flex:0 0 auto;
+ border:1px solid var(--gold);background:linear-gradient(100deg,rgba(217,180,91,.28),rgba(217,180,91,.1));
+ color:var(--gold2);font-size:17px;line-height:1;cursor:pointer;transition:.22s}
+.player-btn:hover{background:rgba(217,180,91,.32);transform:translateY(-2px)}
+.player-btn.small{width:38px;height:38px;font-size:15px}
+.player-main{flex:1;min-width:0}
+.player-title{font-size:clamp(12.5px,1.15vw,15.5px);font-weight:700;letter-spacing:.04em;color:var(--gold2);margin-bottom:9px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-track{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;cursor:pointer}
+.player-track i{display:block;height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,var(--gold3),var(--gold2));transition:width .25s linear}
+.player-time{display:flex;justify-content:space-between;font-size:11.5px;letter-spacing:.08em;color:var(--muted);margin-top:7px}
+.player-vol{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.vol-slider{-webkit-appearance:none;appearance:none;width:clamp(70px,8vw,100px);height:5px;border-radius:3px;
+ background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;
+ background:linear-gradient(100deg,var(--gold2),var(--gold3));cursor:pointer;border:none;box-shadow:0 0 6px rgba(217,180,91,.5)}
+.vol-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+ background:var(--gold2);cursor:pointer;border:none}
+.vol-slider::-moz-range-track{height:5px;border-radius:3px;background:rgba(255,255,255,.12)}
+@media(max-width:640px){
+  .player{flex-wrap:wrap}
+  .player-vol{width:100%;justify-content:center}
+}
+@media print{.player{display:none}}
 /* ── печать ── */
 @page{size:landscape;margin:0}
 @media print{
@@ -222,6 +251,21 @@ kbd{border:1px solid rgba(255,255,255,.25);border-bottom-width:2px;border-radius
   <h2 class="anim">Введение</h2>
   <div class="card anim" style="--d:.12s">
     <p class="lead">Под <b>«Русским танцем»</b> в балете П. И. Чайковского «Лебединое озеро» обычно понимают музыкальный номер <b>Danse russe</b> (Русский танец), входящий в третий акт балета. Это самостоятельный танцевальный эпизод, который не следует путать с самим балетом. Исторически он относится к числу так называемых <b>характерных танцев</b>, то есть сценических номеров, стилизованных под национальную танцевальную традицию.</p>
+  </div>
+
+  <!-- Музыкальный плеер: укажите имя своего аудиофайла в src (файл должен лежать рядом с index.html) -->
+  <audio id="bgAudio" src="music.mp3" loop preload="metadata"></audio>
+  <div class="player anim" style="--d:.24s">
+    <button class="player-btn" id="playBtn" title="Воспроизвести / пауза">▶</button>
+    <div class="player-main">
+      <div class="player-title" id="playerTitle">♪ П. И. Чайковский — «Русский танец» (Danse russe)</div>
+      <div class="player-track" id="playerTrack"><i id="playerBar"></i></div>
+      <div class="player-time"><span id="timeNow">0:00</span><span id="timeTotal">0:00</span></div>
+    </div>
+    <div class="player-vol">
+      <button class="player-btn small" id="muteBtn" title="Выключить звук">🔊</button>
+      <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="70" title="Громкость">
+    </div>
   </div>
 </section>
 
@@ -525,6 +569,90 @@ kbd{border:1px solid rgba(255,255,255,.25);border-bottom-width:2px;border-radius
   document.querySelectorAll('[data-go]').forEach(function(el){
     el.addEventListener('click',function(){go(parseInt(el.getAttribute('data-go'),10));});
   });
+})();
+</script>
+
+<script>
+/* ── Музыкальный плеер ──
+   Аудифайл задаётся в теге <audio id="bgAudio" src="music.mp3"> в разделе «Введение».
+   Положите свой файл (mp3/ogg/wav) рядом с index.html и при необходимости
+   замените "music.mp3" на его имя. */
+(function(){
+  var audio=document.getElementById('bgAudio');
+  if(!audio)return;
+  var playBtn=document.getElementById('playBtn');
+  var muteBtn=document.getElementById('muteBtn');
+  var volSlider=document.getElementById('volSlider');
+  var track=document.getElementById('playerTrack');
+  var pBar=document.getElementById('playerBar');
+  var tNow=document.getElementById('timeNow');
+  var tTotal=document.getElementById('timeTotal');
+  var pTitle=document.getElementById('playerTitle');
+
+  function fmt(t){
+    if(!isFinite(t)||isNaN(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+  function updateMuteIcon(){
+    var off=audio.muted||audio.volume===0;
+    muteBtn.textContent=off?'🔇':'🔊';
+    muteBtn.title=off?'Звук выключен — включить':'Выключить звук';
+  }
+
+  audio.volume=volSlider.value/100;
+
+  /* воспроизведение / пауза */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play().catch(function(){});}
+    else{audio.pause();}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='⏸';playBtn.title='Пауза';});
+  audio.addEventListener('pause',function(){playBtn.textContent='▶';playBtn.title='Воспроизвести';});
+
+  /* выключение / включение звука */
+  muteBtn.addEventListener('click',function(){
+    audio.muted=!audio.muted;
+    updateMuteIcon();
+  });
+
+  /* регулировка громкости */
+  volSlider.addEventListener('input',function(){
+    audio.volume=volSlider.value/100;
+    if(audio.volume>0&&audio.muted){audio.muted=false;}
+    updateMuteIcon();
+  });
+
+  /* время и прогресс */
+  audio.addEventListener('loadedmetadata',function(){
+    tTotal.textContent=fmt(audio.duration);
+  });
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      pBar.style.width=(audio.currentTime/audio.duration*100)+'%';
+      tNow.textContent=fmt(audio.currentTime);
+    }
+  });
+
+  /* перемотка кликом по дорожке */
+  track.addEventListener('click',function(e){
+    if(!audio.duration)return;
+    var r=track.getBoundingClientRect();
+    var p=(e.clientX-r.left)/r.width;
+    p=Math.max(0,Math.min(1,p));
+    audio.currentTime=p*audio.duration;
+    pBar.style.width=(p*100)+'%';
+  });
+
+  /* если аудиофайл не найден */
+  audio.addEventListener('error',function(){
+    pTitle.innerHTML='⚠ Аудиофайл не найден — положите файл <b>music.mp3</b> рядом с index.html';
+    playBtn.disabled=true;
+    playBtn.style.opacity=.45;
+    playBtn.style.cursor='default';
+  });
+
+  updateMuteIcon();
 })();
 </script>
 </body>
